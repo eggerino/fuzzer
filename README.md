@@ -7,6 +7,7 @@ You can also search in git files only to reduce the amount of files being search
 # Build from source
 
 Run `cargo build --release` to compile a release build of the program.
+Add it to the path environment variable `export PATH="$PWD/target/release:$PATH"`
 
 # Test
 
