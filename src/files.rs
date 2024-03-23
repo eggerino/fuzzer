@@ -17,25 +17,29 @@ pub fn from_current_dir() -> Vec<PathBuf> {
         .unwrap_or(Vec::new())
 }
 
-pub fn from_git_files() -> Vec<PathBuf> {
-    env::current_dir()
-        .map(|dir| {
-            Command::new("git")
-                .arg("ls-files")
-                .output()
-                .map(|output| {
-                    output
-                        .stdout
-                        .lines()
-                        .filter_map(Result::ok)
-                        .map(|file| {
-                            let mut path = dir.clone();
-                            path.push(file);
-                            path
-                        })
-                        .collect()
+pub fn from_dir_git_files(dir: &PathBuf) -> Vec<PathBuf> {
+    Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .arg("ls-files")
+        .output()
+        .map(|output| {
+            output
+                .stdout
+                .lines()
+                .filter_map(Result::ok)
+                .map(|file| {
+                    let mut path = dir.clone();
+                    path.push(file);
+                    path
                 })
-                .unwrap_or(Vec::new())
+                .collect()
         })
+        .unwrap_or(Vec::new())
+}
+
+pub fn from_current_dir_git_files() -> Vec<PathBuf> {
+    env::current_dir()
+        .map(|x| from_dir_git_files(&x))
         .unwrap_or(Vec::new())
 }
